@@ -281,6 +281,8 @@ Knit the document, commit your changes, and push them to GitHub. If you'd like, 
 ```bash
 git commit -a -m "Finalizing lab 5 https://github.com/USCbiostats/PM566/issues/23"
 ```
+#Last note
 
+If you wan to ...
 
 
