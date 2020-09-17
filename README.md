@@ -397,6 +397,18 @@ in the previous question, use `leaflet()` to visualize all \~100 points
 in the same figure, applying different colors for those identified in
 this question.
 
+``` r
+met_stations <- unique(met[, .(USAFID, STATE, lon, lat)])
+
+met_stations[, n := 1:.N, by = USAFID]
+met_stations <- met_stations[n == 1]
+
+# met_stations[, .SD[1], by = USAFID]
+
+met_stations[, lat_mid := (max(lat) - min(lat))/2, by = STATE]
+met_stations[, lon_mid := (max(lon) - min(lon))/2, by = STATE]
+```
+
 Knit the doc and save it on GitHub.
 
 ## Question 4: Means of means
