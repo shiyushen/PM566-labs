@@ -163,6 +163,42 @@ atmospheric pressure? Look for the three weather stations that best
 represent continental US using the `quantile()` function. Do these three
 coincide?
 
+``` r
+#obtaining mean per station
+met_stations <- met[, .(
+  wind.sp   = mean(wind.sp, na.rm = TRUE),
+  atm.press = mean(atm.press, na.rm = TRUE),
+  temp      = mean(temp, na.rm = TRUE)
+  ),by = USAFID]
+
+#compute the median
+met_stations[, temp50   := quantile(temp, probs = .5, na.rm = TRUE)]
+met_stations[, atmp50   := quantile(atm.press, probs = .5, na.rm = TRUE)]
+met_stations[, windsp50 := quantile(wind.sp, probs = .5, na.rm = TRUE)]
+
+#filtering
+met_stations[which.min(abs(temp - temp50))]
+```
+
+    ##    USAFID  wind.sp atm.press     temp   temp50   atmp50 windsp50
+    ## 1: 720458 1.209682       NaN 23.68173 23.68406 1014.691 2.461838
+
+``` r
+met_stations[which.min(abs(atm.press - atmp50))]
+```
+
+    ##    USAFID  wind.sp atm.press     temp   temp50   atmp50 windsp50
+    ## 1: 722238 1.472656  1014.691 26.13978 23.68406 1014.691 2.461838
+
+``` r
+met_stations[which.min(abs(wind.sp - windsp50))]
+```
+
+    ##    USAFID  wind.sp atm.press     temp   temp50   atmp50 windsp50
+    ## 1: 720929 2.461838       NaN 17.43278 23.68406 1014.691 2.461838
+
+No these three so not coincide (Not the same USAFID).
+
 Knit the document, commit your changes, and Save it on GitHub. Don’t
 forget to add `README.md` to the tree, the first time you render it.
 

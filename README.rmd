@@ -128,10 +128,26 @@ met[1:5,.(USAFID, WBAN, STATE)]
 
 What is the median station in terms of temperature, wind speed, and atmospheric pressure? Look for the three weather stations that best represent continental US using the `quantile()` function. Do these three coincide?
 
-```{r}
+```{r question1}
+#obtaining mean per station
+met_stations <- met[, .(
+  wind.sp   = mean(wind.sp, na.rm = TRUE),
+  atm.press = mean(atm.press, na.rm = TRUE),
+  temp      = mean(temp, na.rm = TRUE)
+  ),by = USAFID]
 
+#compute the median
+met_stations[, temp50   := quantile(temp, probs = .5, na.rm = TRUE)]
+met_stations[, atmp50   := quantile(atm.press, probs = .5, na.rm = TRUE)]
+met_stations[, windsp50 := quantile(wind.sp, probs = .5, na.rm = TRUE)]
+
+#filtering
+met_stations[which.min(abs(temp - temp50))]
+met_stations[which.min(abs(atm.press - atmp50))]
+met_stations[which.min(abs(wind.sp - windsp50))]
 ```
 
+No these three so not coincide (Not the same USAFID).
 
 Knit the document, commit your changes, and Save it on GitHub. Don't forget to add `README.md` to the tree, the first time you render it.
 
