@@ -3,10 +3,6 @@ title: "Lab 06 - Text Mining"
 output: html_document
 ---
 
-```{r setup}
-knitr::opts_chunk$set(eval = FALSE, include  = FALSE)
-```
-
 # Learning goals
 
 - Use `unnest_tokens()` and `unnest_ngrams()` to extract tokens and ngrams from text.
@@ -45,24 +41,31 @@ Loading in reference transcription samples from https://www.mtsamples.com/
 
 ```{r, warning=FALSE, message=FALSE}
 library(readr)
+library(ggplot2)
+library(tidytext)
 library(dplyr)
-mt_samples <- read_csv("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/00_mtsamples/mtsamples.csv")
+
+mt_samples <- read_csv("/Users/sherryshen/Desktop/mtsamples.txt")
 mt_samples <- mt_samples %>%
   select(description, medical_specialty, transcription)
 
 head(mt_samples)
+
+#mt_samples$transcription[1]
 ```
 
 ---
 
 ## Question 1: What specialties do we have?
 
-We can use `count()` from `dplyr` to figure out how many different catagories do we have? Are these catagories related? overlapping? evenly distributed?
+We can use `count()` from `dplyr` to figure out how many different categories do we have? Are these categories related? overlapping? evenly distributed?
 
 ```{r}
 mt_samples %>%
-  count(___, sort = TRUE)
+  count(medical_specialty, sort = TRUE)
 ```
+
+We can see that among medical_specialty, "Surgery" is the most frequent one with n=1103.  
 
 ---
 
@@ -74,6 +77,19 @@ mt_samples %>%
 
 Explain what we see from this result. Does it makes sense? What insights (if any) do we get?
 
+```{r token-transcrip}
+library(forcats)
+
+mt_samples %>%
+  unnest_tokens(token, transcription) %>%
+  count(token, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(token, n)))+
+  geom_col()
+
+```
+We can see that, among the top 20 words in "transcription", there aren't many words that will raise our interests. 
+
 ---
 
 ## Question 3
@@ -83,11 +99,57 @@ Explain what we see from this result. Does it makes sense? What insights (if any
 
 What do we see know that we have removed stop words? Does it give us a better idea of what the text is about?
 
+```{r remove-sw-num}
+library(stringr)
+stop_words
+nums=as.character(seq(0,100))
+
+mt_samples %>%
+  unnest_tokens(word, transcription) %>%
+  anti_join(stop_words)%>%
+  filter(!(word %in% nums)) %>%
+  count(word, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(word, n)))+
+  geom_col()
+
+#trimws() remove spaces before and after a word 
+#str_squish() remove extra spaces between 2 words that suppose to have only #one space between. 
+```
+After removing "stop_words" and "numbers", we can see that, words start to seems interesting now. 
+
 ---
 
 # Question 4
 
 repeat question 2, but this time tokenize into bi-grams. how does the result change if you look at tri-grams?
+
+```{r grams}
+mt_samples %>%
+  unnest_ngrams(ngram, transcription, n = 2) %>%
+  count(ngram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(ngram, n)))+
+  geom_col()
+
+mt_samples %>%
+  unnest_ngrams(ngram, transcription, n = 3) %>%
+  count(ngram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(ngram, n)))+
+  geom_col()
+
+#combine n=2 and n=3
+mt_samples %>%
+  unnest_ngrams(ngram, transcription, n = 3, n_min = 2) %>%
+  count(ngram, sort = TRUE) %>%
+  top_n(20, n) %>%
+  ggplot(aes(x = n, y = fct_reorder(ngram, n)))+
+  geom_col()
+
+```
+
+We can see that when n=3, we have a more interesting combination of words in "transcription". For example: "the operating room".  
 
 ---
 
@@ -95,11 +157,59 @@ repeat question 2, but this time tokenize into bi-grams. how does the result cha
 
 Using the results you got from questions 4. Pick a word and count the words that appears after and before it.
 
+```{r blood}
+library(tidyr)
+
+mt_bigrams <- mt_samples %>%
+  unnest_ngrams(ngram, transcription, n = 2) %>%
+  separate(ngram, into = c("word1", "word2"), sep = " ") %>%
+  select(word1, word2) 
+
+mt_bigrams %>%
+  filter(word1 == "blood") %>%
+  count(word2, sort = TRUE)
+
+mt_bigrams %>%
+  filter(word2 == "blood") %>%
+  count(word1, sort = TRUE)
+
+#remove stopwords
+mt_bigrams %>%
+  anti_join(
+    stop_words %>% 
+      select(word), by =c("word1" = "word")
+    ) %>%
+  anti_join(
+    stop_words %>% 
+      select(word), by =c("word2" = "word")
+    ) %>%
+  count(word1, word2, sort=TRUE)
+  
+```
+We can see that bi-grams of "blood" appears far more interesting than the one without removing the stop words. 
 ---
 
 # Question 6 
 
 Which words are most used in each of the specialties. you can use `group_by()` and `top_n()` from `dplyr` to have the calculations be done within each specialty. Remember to remove stopwords. How about the most 5 used words?
+
+```{r groupby}
+mt_samples %>%
+  unnest_tokens(token, transcription) %>%
+  anti_join(tidytext::stop_words, by = c("token" = "word")) %>%
+  group_by(medical_specialty) %>%
+  count(token) %>%
+  top_n(1, n)
+  
+mt_samples %>%
+  unnest_tokens(token, transcription) %>%
+  anti_join(tidytext::stop_words, by = c("token" = "word")) %>%
+  group_by(medical_specialty) %>%
+  count(token) %>%
+  top_n(5, n)
+
+```
+We can see that "history" is often mentioned in medicial specialty of Allergy and Immunology. 
 
 # Question 7 - extra
 
@@ -110,3 +220,12 @@ Ideas:
 - Interesting ngrams
 - See if certain words are used more in some specialties then others
 
+```{r TF-IDF}
+mt_samples %>%
+  unnest_tokens(word, transcription) %>%
+  count(word, medical_specialty) %>%
+  bind_tf_idf(word, medical_specialty, n) %>%
+  arrange(desc(tf_idf))
+```
+
+We can see that word "carbon hydrate" having the largest TF-IDF meaning that only in the specialty of "Diet and Nutrition", the word " carbon hydrate" is commonly used. 
