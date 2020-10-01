@@ -1,6 +1,6 @@
 ---
 title: "Lab 07 - Web scraping and Regular Expressions"
-output: github_document
+output: html_document
 ---
 
 ```{r setup}
@@ -256,5 +256,5 @@ For example, if we wanted to add a direct link the HTML page of lecture 7, we co
 ```md
 View [here](https://ghcdn.rawgit.org/USCbiostats/PM566/master/static/slides/07-apis-regex/slides.html)
 ```
-
+View [here](https://ghcdn.rawgit.org/Shiyushen/PM566-labs/master/07-lab/07-lab.html)
 
