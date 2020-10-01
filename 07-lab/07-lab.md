@@ -154,7 +154,7 @@ publications
 ```
 
     ## Response [https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=32984015%2C32969950%2C32921878%2C32914097%2C32914093%2C32912595%2C32907823%2C32907673%2C32888905%2C32881116%2C32837709%2C32763956%2C32763350%2C32745072%2C32742897%2C32692706%2C32690354%2C32680824%2C32666058%2C32649272%2C32596689%2C32592394%2C32584245%2C32501143%2C32486844%2C32462545%2C32432219%2C32432218%2C32432217%2C32427288%2C32420720%2C32386898%2C32371624%2C32371551%2C32361738%2C32326959%2C32323016%2C32314954%2C32300051%2C32259247&retmax=1000&rettype=abstract]
-    ##   Date: 2020-10-01 09:34
+    ##   Date: 2020-10-01 09:56
     ##   Status: 200
     ##   Content-Type: text/xml; charset=UTF-8
     ##   Size: 524 kB
@@ -411,3 +411,6 @@ For example, if we wanted to add a direct link the HTML page of lecture
 ``` md
 View [here](https://ghcdn.rawgit.org/USCbiostats/PM566/master/static/slides/07-apis-regex/slides.html)
 ```
+
+View
+[here](https://ghcdn.rawgit.org/Shiyushen/PM566-labs/master/07-lab/07-lab.html)
