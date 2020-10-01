@@ -52,7 +52,7 @@ counts <- as.character(counts)
 stringr::str_extract(counts, "[0-9,]+")
 ```
 
-Don't forget to commit your work!
+Don't forget to commit your  work!
 
 ## Question 2: Academic publications on COVID19 and Hawaii
 
@@ -70,11 +70,15 @@ Use the function `httr::GET()` to make the following query:
     - retmax: 1000
 
 
-```{r papers-covid-hawaii, eval=FALSE}
+```{r papers-covid-hawaii, eval=TRUE}
 library(httr)
 query_ids <- GET(
-  url   = "BASELINE URL",
-  query = list("QUERY PARAMETERS")
+  url   = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+  query = list(
+    db     = "pubmed", 
+    term   = "covid19 hawaii", 
+    retmax = 1000
+    )
 )
 
 # Extracting the content of the response of GET
@@ -95,15 +99,22 @@ The Ids are wrapped around text in the following way: `<Id>... id number ...</Id
 we can use a regular expression that extract that information. Fill out the
 following lines of code:
 
-```{r get-ids, eval = FALSE}
+```{r get-ids, eval = TRUE}
 # Turn the result into a character vector
 ids <- as.character(ids)
+cat(ids)
 
-# Find all the ids 
-ids <- stringr::str_extract_all(ids, "PATTERN")[[1]]
+# Find all the ids  "[[1]]" :return string vector
+ids <- stringr::str_extract_all(ids, "<Id>[0-9]+</Id>")[[1]]
+
+# it can also work when you are dealing with 2 document
+#ids <- stringr::str_extract_all(c(ids1,ids2), "<Id>[0-9]+</Id>")
 
 # Remove all the leading and trailing <Id> </Id>. Make use of "|"
-ids <- stringr::str_remove_all(ids, "PATTERN")
+ids <- stringr::str_remove_all(ids, "<Id>|</Id>")
+
+#alternative </?Id>
+
 ```
 
 With the ids in hand, we can now try to get the abstracts of the papers. As
@@ -119,7 +130,7 @@ before, we will need to coerce the contents (results) to a list using:
     
 **Pro-tip**: If you want `GET()` to take some element literal, wrap it around `I()` (as you would do in a formula in R). For example, the text `"123,456"` is replaced with `"123%2C456"`. If you don't want that behavior, you would need to do the following `I("123,456")`.
     
-```{r get-abstracts, eval = FALSE}
+```{r get-abstracts, eval = FALSE
 publications <- GET(
   url   = "BASELINE URL HERE",
   query = list(
