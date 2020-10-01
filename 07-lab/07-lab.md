@@ -105,110 +105,9 @@ information. Fill out the following lines of code:
 ``` r
 # Turn the result into a character vector
 ids <- as.character(ids)
-cat(ids)
-```
 
-    ## <?xml version="1.0" encoding="UTF-8"?>
-    ## <!DOCTYPE eSearchResult PUBLIC "-//NLM//DTD esearch 20060628//EN" "https://eutils.ncbi.nlm.nih.gov/eutils/dtd/20060628/esearch.dtd">
-    ## <eSearchResult>
-    ##   <Count>40</Count>
-    ##   <RetMax>40</RetMax>
-    ##   <RetStart>0</RetStart>
-    ##   <IdList>
-    ##     <Id>32984015</Id>
-    ##     <Id>32969950</Id>
-    ##     <Id>32921878</Id>
-    ##     <Id>32914097</Id>
-    ##     <Id>32914093</Id>
-    ##     <Id>32912595</Id>
-    ##     <Id>32907823</Id>
-    ##     <Id>32907673</Id>
-    ##     <Id>32888905</Id>
-    ##     <Id>32881116</Id>
-    ##     <Id>32837709</Id>
-    ##     <Id>32763956</Id>
-    ##     <Id>32763350</Id>
-    ##     <Id>32745072</Id>
-    ##     <Id>32742897</Id>
-    ##     <Id>32692706</Id>
-    ##     <Id>32690354</Id>
-    ##     <Id>32680824</Id>
-    ##     <Id>32666058</Id>
-    ##     <Id>32649272</Id>
-    ##     <Id>32596689</Id>
-    ##     <Id>32592394</Id>
-    ##     <Id>32584245</Id>
-    ##     <Id>32501143</Id>
-    ##     <Id>32486844</Id>
-    ##     <Id>32462545</Id>
-    ##     <Id>32432219</Id>
-    ##     <Id>32432218</Id>
-    ##     <Id>32432217</Id>
-    ##     <Id>32427288</Id>
-    ##     <Id>32420720</Id>
-    ##     <Id>32386898</Id>
-    ##     <Id>32371624</Id>
-    ##     <Id>32371551</Id>
-    ##     <Id>32361738</Id>
-    ##     <Id>32326959</Id>
-    ##     <Id>32323016</Id>
-    ##     <Id>32314954</Id>
-    ##     <Id>32300051</Id>
-    ##     <Id>32259247</Id>
-    ##   </IdList>
-    ##   <TranslationSet>
-    ##     <Translation>
-    ##       <From>covid19</From>
-    ##       <To>"COVID-19"[Supplementary Concept] OR "COVID-19"[All Fields] OR "covid19"[All Fields]</To>
-    ##     </Translation>
-    ##     <Translation>
-    ##       <From>hawaii</From>
-    ##       <To>"hawaii"[MeSH Terms] OR "hawaii"[All Fields]</To>
-    ##     </Translation>
-    ##   </TranslationSet>
-    ##   <TranslationStack>
-    ##     <TermSet>
-    ##       <Term>"COVID-19"[Supplementary Concept]</Term>
-    ##       <Field>Supplementary Concept</Field>
-    ##       <Count>27206</Count>
-    ##       <Explode>N</Explode>
-    ##     </TermSet>
-    ##     <TermSet>
-    ##       <Term>"COVID-19"[All Fields]</Term>
-    ##       <Field>All Fields</Field>
-    ##       <Count>55053</Count>
-    ##       <Explode>N</Explode>
-    ##     </TermSet>
-    ##     <OP>OR</OP>
-    ##     <TermSet>
-    ##       <Term>"covid19"[All Fields]</Term>
-    ##       <Field>All Fields</Field>
-    ##       <Count>794</Count>
-    ##       <Explode>N</Explode>
-    ##     </TermSet>
-    ##     <OP>OR</OP>
-    ##     <OP>GROUP</OP>
-    ##     <TermSet>
-    ##       <Term>"hawaii"[MeSH Terms]</Term>
-    ##       <Field>MeSH Terms</Field>
-    ##       <Count>7799</Count>
-    ##       <Explode>Y</Explode>
-    ##     </TermSet>
-    ##     <TermSet>
-    ##       <Term>"hawaii"[All Fields]</Term>
-    ##       <Field>All Fields</Field>
-    ##       <Count>27601</Count>
-    ##       <Explode>N</Explode>
-    ##     </TermSet>
-    ##     <OP>OR</OP>
-    ##     <OP>GROUP</OP>
-    ##     <OP>AND</OP>
-    ##     <OP>GROUP</OP>
-    ##   </TranslationStack>
-    ##   <QueryTranslation>("COVID-19"[Supplementary Concept] OR "COVID-19"[All Fields] OR "covid19"[All Fields]) AND ("hawaii"[MeSH Terms] OR "hawaii"[All Fields])</QueryTranslation>
-    ## </eSearchResult>
+# to print out text version of it use cat(ids) 
 
-``` r
 # Find all the ids  "[[1]]" :return string vector
 ids <- stringr::str_extract_all(ids, "<Id>[0-9]+</Id>")[[1]]
 
@@ -255,7 +154,7 @@ publications
 ```
 
     ## Response [https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=32984015%2C32969950%2C32921878%2C32914097%2C32914093%2C32912595%2C32907823%2C32907673%2C32888905%2C32881116%2C32837709%2C32763956%2C32763350%2C32745072%2C32742897%2C32692706%2C32690354%2C32680824%2C32666058%2C32649272%2C32596689%2C32592394%2C32584245%2C32501143%2C32486844%2C32462545%2C32432219%2C32432218%2C32432217%2C32427288%2C32420720%2C32386898%2C32371624%2C32371551%2C32361738%2C32326959%2C32323016%2C32314954%2C32300051%2C32259247&retmax=1000&rettype=abstract]
-    ##   Date: 2020-10-01 08:28
+    ##   Date: 2020-10-01 09:03
     ##   Status: 200
     ##   Content-Type: text/xml; charset=UTF-8
     ##   Size: 524 kB
@@ -291,13 +190,47 @@ Using the function `stringr::str_extract_all()` applied on
 Write a regular expression that captures all such instances
 
 ``` r
+library(stringr)
 institution <- str_extract_all(
   publications_txt,
-  "[YOUR REGULAR EXPRESSION HERE]"
+  "University of\\s+[[:alpha:]]+|[[:alpha:]]+\\s+Institute of\\s+[[:alpha:]]+"
   ) 
+
+#\\s+ means one or more space
+
 institution <- unlist(institution)
 table(institution)
 ```
+
+    ## institution
+    ##      Australian Institute of Tropical Massachusetts Institute of Technology 
+    ##                                     9                                     1 
+    ##   National Institute of Environmental    Prophylactic Institute of Southern 
+    ##                                     3                                     2 
+    ##                 University of Arizona              University of California 
+    ##                                     2                                     6 
+    ##                 University of Chicago                University of Colorado 
+    ##                                     1                                     1 
+    ##                   University of Hawai                  University of Hawaii 
+    ##                                    20                                    38 
+    ##                  University of Health                University of Illinois 
+    ##                                     1                                     1 
+    ##                    University of Iowa                University of Lausanne 
+    ##                                     4                                     1 
+    ##              University of Louisville                University of Nebraska 
+    ##                                     1                                     5 
+    ##                  University of Nevada                     University of New 
+    ##                                     1                                     2 
+    ##            University of Pennsylvania              University of Pittsburgh 
+    ##                                    18                                     5 
+    ##                 University of Science                   University of South 
+    ##                                    14                                     1 
+    ##                University of Southern                  University of Sydney 
+    ##                                     1                                     1 
+    ##                   University of Texas                     University of the 
+    ##                                     5                                     1 
+    ##                    University of Utah               University of Wisconsin 
+    ##                                     2                                     3
 
 Repeat the exercise and this time focus on schools and departments in
 the form of
@@ -309,11 +242,62 @@ And tabulate the results
 
 ``` r
 schools_and_deps <- str_extract_all(
-  abstracts_txt,
-  "[YOUR REGULAR EXPRESSION HERE]"
+  publications_txt,
+  "School of\\s+[[:alpha:]]+|Department of\\s+[[:alpha:]]+"
   )
+
 table(schools_and_deps)
 ```
+
+    ## schools_and_deps
+    ## Department of Anesthesiology        Department of Biology 
+    ##                            6                            3 
+    ##     Department of Cardiology           Department of Cell 
+    ##                            1                            4 
+    ##       Department of Clinical  Department of Communication 
+    ##                            2                            1 
+    ##  Department of Computational       Department of Critical 
+    ##                            1                            2 
+    ##        Department of Defense  Department of Environmental 
+    ##                            1                            1 
+    ##   Department of Epidemiology   Department of Experimental 
+    ##                            9                            1 
+    ##         Department of Family        Department of Genetic 
+    ##                            3                            1 
+    ##      Department of Geography     Department of Infectious 
+    ##                            2                            2 
+    ##    Department of Information       Department of Internal 
+    ##                            1                            6 
+    ##        Department of Medical       Department of Medicine 
+    ##                            3                           44 
+    ##   Department of Microbiology         Department of Native 
+    ##                            1                            2 
+    ##     Department of Nephrology      Department of Neurology 
+    ##                            5                            1 
+    ##      Department of Nutrition             Department of OB 
+    ##                            4                            5 
+    ##     Department of Obstetrics Department of Otolaryngology 
+    ##                            4                            4 
+    ##     Department of Pediatrics       Department of Physical 
+    ##                           13                            3 
+    ##     Department of Population     Department of Preventive 
+    ##                            1                            2 
+    ##     Department of Psychiatry     Department of Psychology 
+    ##                            4                            1 
+    ##   Department of Quantitative Department of Rehabilitation 
+    ##                            6                            1 
+    ##         Department of Social        Department of Surgery 
+    ##                            1                            6 
+    ##  Department of Translational       Department of Tropical 
+    ##                            1                            5 
+    ##           Department of Twin        Department of Urology 
+    ##                            2                            1 
+    ##       Department of Veterans           School of Medicine 
+    ##                            2                           87 
+    ##            School of Natural            School of Nursing 
+    ##                            1                            1 
+    ##             School of Public             School of Social 
+    ##                           20                            1
 
 ## Question 5: Form a database
 
