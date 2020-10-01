@@ -232,7 +232,7 @@ using:
     
       - db: pubmed
       - id: A character with all the ids separated by comma, e.g.,
-        “1232131,546464,13131”
+        “1232131,546464,13131” (‘paste(ids, collapse = “,”)’)
       - retmax: 1000
       - rettype: abstract
 
@@ -241,36 +241,63 @@ around `I()` (as you would do in a formula in R). For example, the text
 `"123,456"` is replaced with `"123%2C456"`. If you don’t want that
 behavior, you would need to do the following `I("123,456")`.
 
-\`\`\`{r get-abstracts, eval = FALSE publications \<- GET( url =
-“BASELINE URL HERE”, query = list( “PARAMETERS OF THE QUERY” ) )
+``` r
+publications <- GET(
+  url   = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+  query = list(
+    db      = "pubmed",
+    id      = paste(ids, collapse = ","),
+    retmax  = 1000,
+    rettype = "abstract"
+    )
+)
+publications
+```
 
+    ## Response [https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=32984015%2C32969950%2C32921878%2C32914097%2C32914093%2C32912595%2C32907823%2C32907673%2C32888905%2C32881116%2C32837709%2C32763956%2C32763350%2C32745072%2C32742897%2C32692706%2C32690354%2C32680824%2C32666058%2C32649272%2C32596689%2C32592394%2C32584245%2C32501143%2C32486844%2C32462545%2C32432219%2C32432218%2C32432217%2C32427288%2C32420720%2C32386898%2C32371624%2C32371551%2C32361738%2C32326959%2C32323016%2C32314954%2C32300051%2C32259247&retmax=1000&rettype=abstract]
+    ##   Date: 2020-10-01 08:28
+    ##   Status: 200
+    ##   Content-Type: text/xml; charset=UTF-8
+    ##   Size: 524 kB
+    ## <?xml version="1.0" ?>
+    ## <!DOCTYPE PubmedArticleSet PUBLIC "-//NLM//DTD PubMedArticle, 1st January 201...
+    ## <PubmedArticleSet>
+    ## <PubmedArticle>
+    ##     <MedlineCitation Status="PubMed-not-MEDLINE" Owner="NLM">
+    ##         <PMID Version="1">32984015</PMID>
+    ##         <DateRevised>
+    ##             <Year>2020</Year>
+    ##             <Month>09</Month>
+    ##             <Day>28</Day>
+    ## ...
+
+``` r
 # Turning the output into character vector
+publications <- httr::content(publications)
+publications_txt <- as.character(publications)
+```
 
-publications \<- httr::content(publications) publications\_txt \<-
-as.character(publications)
-
-```` 
-
-With this in hand, we can now analyze the data. This is also a good time for committing and pushing your work!
+With this in hand, we can now analyze the data. This is also a good time
+for committing and pushing your work\!
 
 ## Question 4: Distribution of universities, schools, and departments
 
-Using the function `stringr::str_extract_all()` applied on `publications_txt`, capture all the terms of the form:
+Using the function `stringr::str_extract_all()` applied on
+`publications_txt`, capture all the terms of the form:
 
-1.    University of ...
-2.    ... Institute of ...
+1.  University of …
+2.  … Institute of …
 
 Write a regular expression that captures all such instances
 
-
-```r
+``` r
 institution <- str_extract_all(
   publications_txt,
   "[YOUR REGULAR EXPRESSION HERE]"
   ) 
 institution <- unlist(institution)
 table(institution)
-````
+```
 
 Repeat the exercise and this time focus on schools and departments in
 the form of
