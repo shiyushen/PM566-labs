@@ -1,7 +1,6 @@
 ---
 title: "Lab 9 - HPC"
-output: tufte::tufte_html
-link-citations: yes
+output: github_document
 ---
 
 # Learning goals
@@ -19,6 +18,12 @@ Give yourself a few minutes to think about what you just learned. List three
 examples of problems that you believe may be solved using parallel computing,
 and check for packages on the HPC CRAN task view that may be related to it.
 
+- Cross-validation in machine learning. 'carat', 'mlr'.
+- Bootstrapping: 'boot'.
+- Monte Carlo simulation: 'parallel'.
+- Agent Based Modeling: 'parallel'. 
+
+
 ## Problem 2: Before you
 
 The following functions can be written to be more efficient without using
@@ -27,23 +32,25 @@ parallel:
 1. This function generates a `n x k` dataset with all its entries distributed
 poission with mean `lambda`.
 
-```{r p2-fun1, eval = FALSE}
+```{r p2-fun1, eval = TRUE}
 fun1 <- function(n = 100, k = 4, lambda = 4) {
   x <- NULL
   for (i in 1:n)
     x <- rbind(x, rpois(k, lambda))
+  x
 }
 
 fun1alt <- function(n = 100, k = 4, lambda = 4) {
-  # YOUR CODE HERE
+  matrix(rpois(n*k,lambda = lambda),ncol = k)
 }
 
 # Benchmarking
 microbenchmark::microbenchmark(
-  fun1(),
-  fun1alt()
+  fun1(100),
+  fun1alt(100), unit="relative"
 )
 ```
+
 
 2.  Find the column max (hint: Checkout the function `max.col()`).
 
